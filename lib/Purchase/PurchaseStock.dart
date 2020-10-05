@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddVendor.dart';
-import 'package:stock/AllList.dart';
-import 'package:stock/Purchase/ConfirmPurchase.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DatabaseHelper.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DropdownListShow.dart';
 import 'package:stock/StockTransactions.dart';
@@ -15,6 +13,13 @@ class _PurchaseStockState extends State<PurchaseStock> {
   DatabaseHelper db;
   DropdownListShow dl;
   int _count = 0;
+  int ledgerId = 0;
+  int productId = 0;
+  double productQty = 0.0;
+  double productPrice = 0.0;
+  double productTotal = 0.0;
+  double productGst = 0.0;
+  double productGrandTotal = 0.0;
 
   String vendorName;
   List<DropdownMenuItem<String>> vendorList;
@@ -27,9 +32,6 @@ class _PurchaseStockState extends State<PurchaseStock> {
 
   TextStyle _textStyle = TextStyle(fontWeight: FontWeight.bold);
 
-  int productId;
-  String productPrice;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -40,15 +42,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
     vendorList = [];
     itemList = [];
     _getDetails();
-    _getCount();
-  }
-
-  Future<void> _getCount() async {
-    await db.getCount("purchase").then((count) {
-      setState(() {
-        _count = count;
-      });
-    });
+    _getPurchaseTable();
   }
 
   void _getDetails() async {
@@ -73,8 +67,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
     });
   }
 
-  int _getLedgerDetails(String ledgerType) {
-    int ledgerId;
+  void _getLedgerId(String ledgerType) {
     db.getLedgers(ledgerType).then((value) {
       value.forEach((element) {
         if (element['ledger_name'].toString() == vendorName.toString()) {
@@ -83,11 +76,21 @@ class _PurchaseStockState extends State<PurchaseStock> {
           print(vendorName);
           setState(() {
             ledgerId = element['ledger_id'];
+            setState(() {});
+            print(ledgerId.toString());
           });
         }
       });
     });
-    return ledgerId;
+  }
+
+  void _getPurchaseTable() {
+    db.getTable("purchase").then((value) {
+      value.forEach((element) {
+        print(element.toString());
+        print(element['product_id'].toString());
+      });
+    });
   }
 
   void _getProductDetails() {
@@ -99,8 +102,14 @@ class _PurchaseStockState extends State<PurchaseStock> {
           print(itemName);
           setState(() {
             productId = element['product_id'];
-            productPrice = element['product_price'];
+            setState(() {});
+            print("Product ID : " + productId.toString());
+            productPrice = double.parse(element['product_price']);
+            setState(() {});
+            productQty = double.parse(element['product_qty']);
+            setState(() {});
           });
+          setState(() {});
         }
       });
     });
@@ -116,8 +125,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
           PopupMenuButton<String>(
             onSelected: _selected,
             itemBuilder: (BuildContext context) {
-              return {'All Purchase'}
-                  .map((String choice) {
+              return {'All Purchase'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -128,7 +136,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.only(left: 20, top: 20.0, right: 20),
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -164,7 +172,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
                       onChanged: (String value) {
                         setState(() {
                           vendorName = value;
-                          _getLedgerDetails("1");
+                          _getLedgerId("1");
                           // print("ID: " + data[1]['ledger_id'].toString());
                         });
                       }),
@@ -203,8 +211,9 @@ class _PurchaseStockState extends State<PurchaseStock> {
                         setState(() {
                           itemName = value;
                           _getProductDetails();
-                          _itemPrice.text = productPrice;
+                          _itemPrice.text = productPrice.toString();
                         });
+                        setState(() {});
                       }),
                 )
               ],
@@ -240,6 +249,11 @@ class _PurchaseStockState extends State<PurchaseStock> {
                       hintText: "Item Price",
                       // border: InputBorder.none
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        productPrice = double.parse(value);
+                      });
+                    },
                   ),
                 )
               ],
@@ -275,32 +289,149 @@ class _PurchaseStockState extends State<PurchaseStock> {
                       hintText: "Item Quantity",
                       // border: InputBorder.none
                     ),
+                    onChanged: (value) {
+                      print("QTY : " + value.toString());
+                      // print("QTY : " +_itemQty.toString());
+                      setState(() {
+                        if(_itemQty.text.isEmpty){
+                          productTotal = 0.0;
+                          productGst = 0.0;
+                          productGrandTotal = 0.0;
+                        }else{
+                          productTotal = productPrice * double.parse(value);
+                          productGst = productTotal * 18.0 / 100;
+                          productGrandTotal = productTotal + productGst;
+                          print(productGrandTotal.toString());
+                        }
+                      });
+                    },
                   ),
                 )
               ],
             ),
-            SizedBox(
-              height: 50
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  width: 105,
+                  child: Row(
+                    children: [
+                      Text(
+                        "Total",
+                        style: _textStyle,
+                      ),
+                      Expanded(
+                          child: Text(
+                        ":",
+                        style: _textStyle,
+                        textAlign: TextAlign.right,
+                      )),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(productTotal.toString()),
+                )
+              ],
             ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  width: 105,
+                  child: Row(
+                    children: [
+                      Text(
+                        "GST",
+                        style: _textStyle,
+                      ),
+                      Expanded(
+                          child: Text(
+                        ":",
+                        style: _textStyle,
+                        textAlign: TextAlign.right,
+                      )),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(productGst.toString()),
+                )
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  width: 105,
+                  child: Row(
+                    children: [
+                      Text(
+                        "Grand Total",
+                        style: _textStyle,
+                      ),
+                      Expanded(
+                          child: Text(
+                        ":",
+                        style: _textStyle,
+                        textAlign: TextAlign.right,
+                      )),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Text(productGrandTotal.toString()),
+                )
+              ],
+            ),
+            SizedBox(height: 50),
             RaisedButton(
               onPressed: () {
-                db.purchaseProduct(_getLedgerDetails("1"), productId, _itemPrice.text, _itemQty.text);
+                print("Ledger Id: " + ledgerId.toString());
+                print("Product Id: " + productId.toString());
+                if (vendorName.isNotEmpty && itemName.isNotEmpty && _itemPrice.text.isNotEmpty && _itemQty.text.isNotEmpty) {
+                  db.addToPurchase(ledgerId, productId, productTotal.toString(), productGst.toString(), productGrandTotal.toString(), _itemQty.text.toString());
+                  /*db.addToPurchase(
+                      ledgerId,
+                      productId,
+                      productTotal.toString(),
+                      productGst.toString(),
+                      productGrandTotal.toString(),
+                      _itemQty.text.toString());*/
+                  //     .then((_purchaseId) {
+                  //   print(_purchaseId[0]['last_insert_rowid()'].toString());
+                  //   db
+                  //       .stockTransaction(
+                  //           ledgerId,
+                  //           _purchaseId[0]['last_insert_rowid()'],
+                  //           productId,
+                  //           "Purchase",
+                  //           _itemQty.text.toString(),
+                  //           "0")
+                  //       .then((_stockTId) {
+                  //     print(_stockTId[0]['last_insert_rowid()'].toString());
+                  //     db.updatePurchase(_purchaseId[0]['last_insert_rowid()'],
+                  //         _stockTId[0]['last_insert_rowid()']);
+                  //     print(_purchaseId[0]['last_insert_rowid()'].toString());
+                  //   });
+                  // });
+                } else {
+                  print("Enter All Details Correctly");
+                }
               },
               child: Text("Purchase"),
               color: Colors.blue,
               textColor: Colors.white,
             ),
-            SizedBox(
-                height: 20
-            ),
-            RaisedButton(
-              onPressed: _count != 0 ? () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmPurchase()));
-              } : null,
-              child: Text("Confirm Purchase"),
-              color: Colors.blue,
-              textColor: Colors.white,
-            )
           ],
         ),
       ),
@@ -314,14 +445,14 @@ class _PurchaseStockState extends State<PurchaseStock> {
       ),
     );
   }
-
   void _selected(String value) {
     switch (value) {
       case 'All Purchase':
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => StockTransactions("purchase")));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StockTransactions("purchase")));
         break;
     }
   }
-
 }

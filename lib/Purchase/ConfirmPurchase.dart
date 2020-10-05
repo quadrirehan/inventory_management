@@ -48,7 +48,11 @@ class _ConfirmPurchaseState extends State<ConfirmPurchase> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
-                    child: Text(snap.data[index]['p_item_price']),);
+                    child: Row(
+                      children: [
+                        Text(snap.data[index]['p_item_price']),
+                      ],
+                    ),);
                   });
             }else if(snap.hasError){
               return Center(child: Text("Try Again"),);

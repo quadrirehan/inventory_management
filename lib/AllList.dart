@@ -44,7 +44,7 @@ class _AllListState extends State<AllList> {
     }else if(widget.list == "products"){
       data = await db.getProducts();
     }else if(widget.list == "purchase"){
-      data = await db.getTable("purchase_items");
+      data = await db.getTable("purchase");
     }
     // print(data[0]['${widget.list}_name'].toString());
     return data;

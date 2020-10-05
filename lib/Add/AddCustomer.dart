@@ -121,7 +121,7 @@ class _AddCustomerState extends State<AddCustomer> {
                           gravity: ToastGravity.BOTTOM);
                     } else {
                       db
-                          .addLedger(_customerName.text, _customerMobile.text,
+                          .addLedger(_customerName.text, 2, _customerMobile.text,
                               "2")
                           .then((value) {
                         Alert(

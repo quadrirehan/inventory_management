@@ -121,7 +121,7 @@ class _AddVendorState extends State<AddVendor> {
                           gravity: ToastGravity.BOTTOM);
                     } else {
                       db
-                          .addLedger(_vendorName.text, _vendorMobile.text, "1")
+                          .addLedger(_vendorName.text, 1, _vendorMobile.text, "1")
                           .then((value) {
                         Alert(
                           context: context,

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddCustomer.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddItem.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddVendor.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DatabaseHelper.dart';
 
 class StockTransactions extends StatefulWidget {
@@ -26,7 +23,7 @@ class _StockTransactions extends State<StockTransactions> {
   }
 
   Future<void> _getCount() async {
-    await db.getCount(widget.transaction).then((count) {
+    await db.getCount("purchase").then((count) {
       setState(() {
         _count = count;
       });
@@ -37,13 +34,11 @@ class _StockTransactions extends State<StockTransactions> {
 
   Future<List> _getList() async {
     var data;
-    // if(widget.transaction == "ledgersV"){
-    //   data = await db.getLedgers("1");
-    // }else if(widget.list == "ledgersC"){
-    //   data = await db.getLedgers("2");
-    // }else{
-      data = await db.getTable("purchase_items");
-    // }
+    var stockT;
+    stockT = await db.getTable("stock_transaction");
+    print(stockT.toString());
+    data = await db.getTable(widget.transaction);
+    print(data.toString());
     // print(data[0]['${widget.list}_name'].toString());
     return data;
   }
@@ -53,9 +48,9 @@ class _StockTransactions extends State<StockTransactions> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        // title: Text(widget.list.toString() == "ledgersV"
-        //     ? "Vendors"
-        //     : widget.list.toString() == "ledgersC" ? "Customers" : "Products"),
+        title: Text(widget.transaction.toString() == "purchase"
+            ? "All Purchase"
+            : "All Sell"),
         centerTitle: true,
       ),
       body: _count != 0
@@ -72,33 +67,32 @@ class _StockTransactions extends State<StockTransactions> {
                         itemCount: snap.data.length != 0 ? snap.data.length : 0,
                         itemBuilder: (context, index) {
                           return Container(
-                            margin: EdgeInsets.only(bottom: 10),
+                              margin: EdgeInsets.only(bottom: 10),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(10)),
-                              child: /*widget.list.toString() == "ledgersV"
-                                  ? */ListTile(
+                              child: widget.transaction.toString() == "purchase"
+                                  ? ListTile(
                                       title: Text(snap.data[index]
-                                          ['product_id'].toString()),
+                                              ['purchase_id']
+                                          .toString()),
                                       subtitle: Text(snap.data[index]
-                                          ['p_item_price'].toString()),
-                                trailing: Text(snap.data[index]['p_item_qty']),
+                                              ['stock_t_id']
+                                          .toString()),
+                                      trailing: Text(snap.data[index]
+                                              ['purchase_grand_total']
+                                          .toString()),
+                                    )
+                                  : ListTile(
+                                      title: Text(snap.data[index]['sell_id']
+                                          .toString()),
+                                      subtitle: Text(snap.data[index]
+                                              ['stock_t_id']
+                                          .toString()),
+                                      trailing: Text(snap.data[index]
+                                              ['sell_grand_total']
+                                          .toString()),
                                     ));
-                                  /*: widget.list.toString() == "ledgersC"
-                                      ? ListTile(
-                                          title: Text(snap.data[index]
-                                              ['ledger_name']),
-                                          subtitle: Text(snap.data[index]
-                                              ['ledger_mobile']),
-                                // trailing: Text(snap.data[index]['customer_balance'] + "/-", style: TextStyle(color: Colors.red),),
-                                        )
-                                      : ListTile(
-                                          title: Text(snap.data[index]
-                                              ['product_name']),
-                                          subtitle: Text("Quantity : "+snap.data[index]
-                                              ['product_qty']),
-                                trailing: Text(snap.data[index]['product_price']+"/-"),
-                                        ));*/
                         },
                       );
                     } else {
@@ -109,15 +103,6 @@ class _StockTransactions extends State<StockTransactions> {
           : Center(
               child: Text("No Records Found"),
             ),
-      // floatingActionButton: FloatingActionButton(onPressed: (){
-      //   if(widget.list == "vendor"){
-      //     Navigator.push(context, MaterialPageRoute(builder: (context) => AddVendor("allList")));
-      //   }else if(widget.list == "customer"){
-      //     Navigator.push(context, MaterialPageRoute(builder: (context) => AddCustomer("allList")));
-      //   }else{
-      //     Navigator.push(context, MaterialPageRoute(builder: (context) => AddItem("allList")));
-      //   }
-      // }, child: Icon(Icons.add), tooltip: "Add ${widget.list}",),
     );
   }
 }
