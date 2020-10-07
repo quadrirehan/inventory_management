@@ -37,7 +37,10 @@ class DatabaseHelper {
     //     "CREATE TABLE vendor(vendor_id INTEGER PRIMARY KEY AUTOINCREMENT, vendor_name TEXT, vendor_mobile TEXT)");
     // db.execute(
     //     "CREATE TABLE item(item_id INTEGER PRIMARY KEY AUTOINCREMENT, item_name TEXT, item_price TEXT, item_qty TEXT)");
-
+// db.execute(
+    //     "CREATE TABLE purchase_items(p_item_id	INTEGER PRIMARY KEY AUTOINCREMENT, vendor_id INTEGER, product_id	INTEGER, p_item_price	TEXT, p_item_qty	TEXT, p_item_total_price	TEXT)");
+    // db.execute(
+    //     "CREATE TABLE sell_items(sell_item_id	INTEGER PRIMARY KEY AUTOINCREMENT, sell_item_name	TEXT, sell_item_price	TEXT, sell_item_qty	TEXT, sell_item_total_price	TEXT)");
     db.execute(
         "CREATE TABLE groups(group_id INTEGER PRIMARY KEY AUTOINCREMENT, group_name TEXT)");
     db.execute(
@@ -48,17 +51,15 @@ class DatabaseHelper {
         "CREATE TABLE purchase(purchase_id	INTEGER PRIMARY KEY AUTOINCREMENT, ledger_id	INTEGER, product_id INTEGER, stock_t_id	INTEGER, purchase_date TEXT, purchase_total	TEXT, purchase_gst	TEXT, purchase_grand_total	TEXT)");
     db.execute(
         "CREATE TABLE p_return(p_return__id	INTEGER PRIMARY KEY AUTOINCREMENT, ledger_id	INTEGER, product_id INTEGER, stock_t_id	INTEGER, p_return_reason TEXT, p_return_date TEXT, p_return_qty TEXT)");
-    // db.execute(
-    //     "CREATE TABLE purchase_items(p_item_id	INTEGER PRIMARY KEY AUTOINCREMENT, vendor_id INTEGER, product_id	INTEGER, p_item_price	TEXT, p_item_qty	TEXT, p_item_total_price	TEXT)");
-    // db.execute(
-    //     "CREATE TABLE sell_items(sell_item_id	INTEGER PRIMARY KEY AUTOINCREMENT, sell_item_name	TEXT, sell_item_price	TEXT, sell_item_qty	TEXT, sell_item_total_price	TEXT)");
     db.execute(
         "CREATE TABLE sell(sell_id	INTEGER PRIMARY KEY AUTOINCREMENT, ledger_id	INTEGER, product_id INTEGER, stock_t_id	INTEGER, sell_date TEXT, sell_total	TEXT, sell_gst	TEXT, sell_grand_total	TEXT)");
     db.execute(
         "CREATE TABLE s_return(s_return__id	INTEGER PRIMARY KEY AUTOINCREMENT, ledger_id	INTEGER, product_id INTEGER, stock_t_id	INTEGER, s_return_reason TEXT, s_return_date TEXT, s_return_qty TEXT)");
     db.execute(
         "CREATE TABLE stock_transaction(stock_id	INTEGER PRIMARY KEY AUTOINCREMENT, ledger_id	INTEGER, product_id	INTEGER, voucher_number	INTEGER, voucher_type	TEXT, stock_dateTime TEXT, stock_in	TEXT, stock_out	TEXT, total_stock TEXT)");
-    db.rawInsert("");
+
+    db.rawInsert("INSERT INTO groups(group_name) VALUES('vendor')");
+    db.rawInsert("INSERT INTO groups(group_name) VALUES('customer')");
   }
 
   Future<int> addLedger(String ledger_name, int group_id, String ledger_mobile,

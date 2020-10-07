@@ -288,13 +288,19 @@ class _SellProductsState extends State<SellProducts> {
                             print(productGrandTotal.toString());
                           } else {
                             setState(() {
-                              _itemQty.text = productQty.round().toString();
+                              _itemQty.text = productQty.toString();
+                              value = productQty.toString();
+                              productTotal = productPrice * double.parse(value);
+                              productGst = productTotal * 18.0 / 100;
+                              productGrandTotal = productTotal + productGst;
+                              print(productGrandTotal.toString());
+
                               Fluttertoast.showToast(
                                   msg: "Only $productQty pcs left in stock...",
                                   fontSize: 16.0,
                                   backgroundColor: Colors.grey[600],
                                   textColor: Colors.white,
-                                  toastLength: Toast.LENGTH_LONG,
+                                  toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.BOTTOM);
                             });
                           }

@@ -75,7 +75,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              Container(
+                height: 50,
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PurchaseStock()));
+                  },
+                  child: Text("Purchase Return"),
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              SizedBox(height: 10),
               Container(
                 height: 50,
                 child: RaisedButton(
@@ -92,7 +109,24 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              Container(
+                height: 50,
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SellProducts()));
+                  },
+                  child: Text("Sell Return"),
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              SizedBox(height: 10),
               Container(
                 height: 50,
                 child: RaisedButton(
@@ -107,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Container(
                 height: 50,
                 child: RaisedButton(
@@ -122,7 +156,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              SizedBox(height: 20),
             ],
           ),
         ),
