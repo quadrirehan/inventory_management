@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../StockTransactions.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddCustomer.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DropdownListShow.dart';
+import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/Utils.dart';
 
 import '../Utils/DatabaseHelper.dart';
 
@@ -12,7 +13,7 @@ class SellProducts extends StatefulWidget {
 
 class _SellProductsState extends State<SellProducts> {
   DatabaseHelper db;
-  DropdownListShow dl;
+  Utils dl;
   int _count = 0;
   int ledgerId = 0;
   int productId = 0;
@@ -21,6 +22,7 @@ class _SellProductsState extends State<SellProducts> {
   double productTotal = 0.0;
   double productGst = 0.0;
   double productGrandTotal = 0.0;
+  String sellDate = "";
 
   String customerName;
   List<DropdownMenuItem<String>> customerList;
@@ -40,7 +42,7 @@ class _SellProductsState extends State<SellProducts> {
     super.initState();
 
     db = DatabaseHelper.instance;
-    dl = DropdownListShow();
+    dl = Utils();
     itemList = [];
     customerList = [];
 
@@ -109,7 +111,6 @@ class _SellProductsState extends State<SellProducts> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,14 +143,14 @@ class _SellProductsState extends State<SellProducts> {
                       Text("Customer", style: _textStyle,),
                       Expanded(
                           child: Text(
-                        ":", style: _textStyle,
-                        textAlign: TextAlign.right,
-                      )),
+                            ":", style: _textStyle,
+                            textAlign: TextAlign.right,
+                          )),
                     ],
                   ),
                 ),
                 SizedBox(
-                  width: 10
+                    width: 10
                 ),
                 Expanded(
                   child: DropdownButton<String>(
@@ -175,14 +176,14 @@ class _SellProductsState extends State<SellProducts> {
                       Text("Item", style: _textStyle,),
                       Expanded(
                           child: Text(
-                        ":", style: _textStyle,
-                        textAlign: TextAlign.right,
-                      )),
+                            ":", style: _textStyle,
+                            textAlign: TextAlign.right,
+                          )),
                     ],
                   ),
                 ),
                 SizedBox(
-                  width: 10
+                    width: 10
                 ),
                 Expanded(
                   child: DropdownButton<String>(
@@ -274,15 +275,29 @@ class _SellProductsState extends State<SellProducts> {
                       print("QTY : " + value.toString());
                       // print("QTY : " +_itemQty.toString());
                       setState(() {
-                        if(_itemQty.text.isEmpty){
+                        if (_itemQty.text.isEmpty) {
                           productTotal = 0.0;
                           productGst = 0.0;
                           productGrandTotal = 0.0;
-                        }else{
-                          productTotal = productPrice * double.parse(value);
-                          productGst = productTotal * 18.0 / 100;
-                          productGrandTotal = productTotal + productGst;
-                          print(productGrandTotal.toString());
+                        } else {
+                          if (double.parse(_itemQty.text.toString()) <=
+                              productQty) {
+                            productTotal = productPrice * double.parse(value);
+                            productGst = productTotal * 18.0 / 100;
+                            productGrandTotal = productTotal + productGst;
+                            print(productGrandTotal.toString());
+                          } else {
+                            setState(() {
+                              _itemQty.text = productQty.round().toString();
+                              Fluttertoast.showToast(
+                                  msg: "Only $productQty pcs left in stock...",
+                                  fontSize: 16.0,
+                                  backgroundColor: Colors.grey[600],
+                                  textColor: Colors.white,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM);
+                            });
+                          }
                         }
                       });
                     },
@@ -326,7 +341,7 @@ class _SellProductsState extends State<SellProducts> {
                   child: Row(
                     children: [
                       Text(
-                        "GST",
+                        "GST 18%",
                         style: _textStyle,
                       ),
                       Expanded(
@@ -377,9 +392,22 @@ class _SellProductsState extends State<SellProducts> {
             SizedBox(height: 50),
             RaisedButton(
               onPressed: () {
-                if(customerName.isNotEmpty && itemName.isNotEmpty && _itemPrice.text.isNotEmpty && _itemQty.text.isNotEmpty){
-                  db.addToSell(ledgerId, productId, productTotal.toString(), productGst.toString(), productGrandTotal.toString(), _itemQty.text.toString());
-                }else{
+                setState(() {
+                  sellDate =
+                      DateTime.now().toLocal().toString().substring(0, 19);
+                });
+                print(sellDate);
+                if (customerName.isNotEmpty && itemName.isNotEmpty &&
+                    _itemPrice.text.isNotEmpty && _itemQty.text.isNotEmpty) {
+                  db.addToSell(
+                      ledgerId,
+                      productId,
+                      sellDate.toString(),
+                      productTotal.toString(),
+                      productGst.toString(),
+                      productGrandTotal.toString(),
+                      _itemQty.text.toString());
+                } else {
                   print("Enter All Details Correctly");
                 }
               },
@@ -400,6 +428,7 @@ class _SellProductsState extends State<SellProducts> {
       ),
     );
   }
+
   void _selected(String value) {
     switch (value) {
       case 'All Sell':

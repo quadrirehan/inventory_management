@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DatabaseHelper.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Sell/SellProducts.dart';
 
-class DropdownListShow{
-
+class Utils{
   // DatabaseHelper db = DatabaseHelper.instance;
   //
   // List<DropdownMenuItem<String>> vendorList = [];

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Add/AddVendor.dart';
 import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DatabaseHelper.dart';
-import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/DropdownListShow.dart';
+import 'file:///D:/Rehan/Android/flutter/stock/lib/Utils/Utils.dart';
 import 'package:stock/StockTransactions.dart';
 
 class PurchaseStock extends StatefulWidget {
@@ -11,7 +11,7 @@ class PurchaseStock extends StatefulWidget {
 
 class _PurchaseStockState extends State<PurchaseStock> {
   DatabaseHelper db;
-  DropdownListShow dl;
+  Utils dl;
   int _count = 0;
   int ledgerId = 0;
   int productId = 0;
@@ -20,6 +20,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
   double productTotal = 0.0;
   double productGst = 0.0;
   double productGrandTotal = 0.0;
+  String purchaseDate = "";
 
   String vendorName;
   List<DropdownMenuItem<String>> vendorList;
@@ -38,7 +39,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
     super.initState();
 
     db = DatabaseHelper.instance;
-    dl = DropdownListShow();
+    dl = Utils();
     vendorList = [];
     itemList = [];
     _getDetails();
@@ -345,7 +346,7 @@ class _PurchaseStockState extends State<PurchaseStock> {
                   child: Row(
                     children: [
                       Text(
-                        "GST",
+                        "GST 18%",
                         style: _textStyle,
                       ),
                       Expanded(
@@ -396,10 +397,13 @@ class _PurchaseStockState extends State<PurchaseStock> {
             SizedBox(height: 50),
             RaisedButton(
               onPressed: () {
+                setState(() {
+                  purchaseDate = DateTime.now().toLocal().toString().substring(0, 19);
+                });
                 print("Ledger Id: " + ledgerId.toString());
                 print("Product Id: " + productId.toString());
                 if (vendorName.isNotEmpty && itemName.isNotEmpty && _itemPrice.text.isNotEmpty && _itemQty.text.isNotEmpty) {
-                  db.addToPurchase(ledgerId, productId, productTotal.toString(), productGst.toString(), productGrandTotal.toString(), _itemQty.text.toString());
+                  db.addToPurchase(ledgerId, productId, purchaseDate.toString(), productTotal.toString(), productGst.toString(), productGrandTotal.toString(), _itemQty.text.toString());
                   /*db.addToPurchase(
                       ledgerId,
                       productId,

@@ -19,9 +19,9 @@ class AddItem extends StatefulWidget {
 class _AddItemState extends State<AddItem> {
   DatabaseHelper db;
 
-  TextEditingController _itemName = TextEditingController(text: "");
-  TextEditingController _itemPrice = TextEditingController(text: "");
-  TextEditingController _itemQty = TextEditingController(text: "");
+  TextEditingController _itemName = TextEditingController();
+  TextEditingController _itemPrice = TextEditingController();
+  TextEditingController _itemQty = TextEditingController();
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _AddItemState extends State<AddItem> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.only(left: 20, top: 20, right: 20),
         child: Center(
           child: ListView(
             shrinkWrap: true,
@@ -143,8 +143,7 @@ class _AddItemState extends State<AddItem> {
               ),
               RaisedButton(
                 onPressed: () {
-
-                  if(_itemName.text != "" || _itemPrice.text != "" || _itemQty.text != ""){
+                  if(_itemName.text.isNotEmpty && _itemPrice.text.isNotEmpty && _itemQty.text.isNotEmpty){
                     db.addProducts(_itemName.text.toString(),
                         _itemPrice.text.toString(), _itemQty.text.toString())
                         .then((value) {

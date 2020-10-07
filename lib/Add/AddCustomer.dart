@@ -18,8 +18,8 @@ class AddCustomer extends StatefulWidget {
 class _AddCustomerState extends State<AddCustomer> {
   DatabaseHelper db;
 
-  TextEditingController _customerName = TextEditingController(text: "");
-  TextEditingController _customerMobile = TextEditingController(text: "");
+  TextEditingController _customerName = TextEditingController();
+  TextEditingController _customerMobile = TextEditingController();
 
   @override
   void initState() {
@@ -109,8 +109,8 @@ class _AddCustomerState extends State<AddCustomer> {
               ),
               RaisedButton(
                 onPressed: () {
-                  if (_customerName.text != "" ||
-                      _customerMobile.text != "") {
+                  if (_customerName.text.isNotEmpty &&
+                      _customerMobile.text.isNotEmpty) {
                     if (_customerMobile.text.length != 10) {
                        Fluttertoast.showToast(
                           msg: "Enter 10 Digit Mobile Number",

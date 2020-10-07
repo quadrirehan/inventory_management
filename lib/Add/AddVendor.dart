@@ -109,7 +109,7 @@ class _AddVendorState extends State<AddVendor> {
               ),
               RaisedButton(
                 onPressed: () {
-                  if (_vendorName.text != "" || _vendorMobile.text != "") {
+                  if (_vendorName.text.isNotEmpty && _vendorMobile.text.isNotEmpty) {
                     print(_vendorName.text);
                     if (_vendorMobile.text.length != 10) {
                       Fluttertoast.showToast(

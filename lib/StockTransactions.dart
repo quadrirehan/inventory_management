@@ -73,6 +73,14 @@ class _StockTransactions extends State<StockTransactions> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: widget.transaction.toString() == "purchase"
                                   ? ListTile(
+                                leading: Column(
+                                  children: [
+                                    SizedBox(height: 5,),
+                                    Text(snap.data[index]['purchase_date'].toString().split(" ")[0]),
+                                    SizedBox(height: 5,),
+                                    Text(snap.data[index]['purchase_date'].toString().split(" ")[1]),
+                                  ],
+                                ),
                                       title: Text(snap.data[index]
                                               ['purchase_id']
                                           .toString()),
@@ -84,7 +92,15 @@ class _StockTransactions extends State<StockTransactions> {
                                           .toString()),
                                     )
                                   : ListTile(
-                                      title: Text(snap.data[index]['sell_id']
+                                leading: Column(
+                                  children: [
+                                    SizedBox(height: 5,),
+                                    Text(snap.data[index]['sell_date'].toString().split(" ")[0]),
+                                    SizedBox(height: 5,),
+                                    Text(snap.data[index]['sell_date'].toString().split(" ")[1]),
+                                  ],
+                                ),
+                                title: Text(snap.data[index]['sell_id']
                                           .toString()),
                                       subtitle: Text(snap.data[index]
                                               ['stock_t_id']
